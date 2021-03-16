@@ -1,9 +1,0 @@
-main: "ltotj.texasholdem.Main"
-name: "TexasHoldem"
-version: "1.0.0"
-api-version: "1.16"
-depend: [Vault]
-commands:
-  poker:
-    description:
-    usage:  "/poker help でコマンドを確認"
