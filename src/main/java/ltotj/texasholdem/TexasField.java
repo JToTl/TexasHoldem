@@ -286,21 +286,21 @@ public class TexasField {
             putPot();
         }
 
-        private List<Card> sortCard(List<Card> cards){//数字を優先して並び替え
-            for (i = 0; i < cards.size(); i++) {
-                for (j = i + 1; j < cards.size(); j++) {
-                    if (cards.get(j).number < cards.get(i).number) {
-                        Card icard = cards.get(j);
-                        cards.set(j, cards.get(i));
-                        cards.set(i, icard);
-                    } else if (cards.get(j).number == cards.get(i).number && cards.get(j).suit < cards.get(i).suit) {
-                        Card icard = cards.get(j);
-                        cards.set(j, cards.get(i));
-                        cards.set(i, icard);
+        private List<Card> sortCard(List<Card> sortcards){//数字を優先して並び替え
+            for (i = 0; i < sortcards.size(); i++) {
+                for (j = i + 1; j < sortcards.size(); j++) {
+                    if (sortcards.get(j).number < sortcards.get(i).number) {
+                        Card icard = sortcards.get(j);
+                        sortcards.set(j, sortcards.get(i));
+                        sortcards.set(i, icard);
+                    } else if (sortcards.get(j).number == sortcards.get(i).number && sortcards.get(j).suit < sortcards.get(i).suit) {
+                        Card icard = sortcards.get(j);
+                        sortcards.set(j, sortcards.get(i));
+                        sortcards.set(i, icard);
                     }
                 }
             }
-            return cards;
+            return sortcards;
         }
 
         List<Card> wow= new ArrayList<>(community);
@@ -337,10 +337,9 @@ public class TexasField {
         //手の判定　多分一番なげえ
         private double judgeHand(int t) {
 
-            List<Card> inst= new ArrayList<>(community);
-            inst.addAll(seatmap.get(t).myhands);
-            List<Card> judgedhand=new ArrayList<>(sortCard(inst)),cards = new ArrayList<>();
-            int dupnum = 0, dupsuit = 0, numsum = 0;
+            List<Card> judgedhand=new ArrayList<>(community),cards = new ArrayList<>();
+            judgedhand.addAll(seatmap.get(t).myhands);
+            int dupnum = 0, dupsuit = 0;
             double r = 0;
             boolean straight = false;
 
@@ -354,12 +353,11 @@ public class TexasField {
 
             //ストレートフラッシュかどうか　ついでにフラッシュならそれはそれでって感じ
             if(dupsuit>9){
-                cards.addAll(sortCardSuit(judgedhand));
-                for (i = 1; i < 7; i++) if (judgedhand.get(i).suit == judgedhand.get(3).suit) cards.add(judgedhand.get(i));
+                cards.add(sortCardSuit(judgedhand).get(3));
+                for (i = 1; i < 7; i++) if (judgedhand.get(i).suit == judgedhand.get(3).suit&&i!=3) cards.add(judgedhand.get(i));
+                sortCard(cards);
                 for (i = cards.size() - 5; i > -1; i--) {
-                    numsum = 0;
-                    for (j = 4; j > -1; j--) numsum = numsum + cards.get(i + j).number;
-                    if (numsum * (cards.get(i + 4).number - cards.get(i).number) == 20 * cards.get(i + 2).number) {
+                    if (cards.get(i + 4).number - cards.get(i).number==4) {
                         if(cards.get(i+4).number==14)r=190000000000.0;
                         else r=180000000000.0+100000000*cards.get(i+4).number;
                         straight=true;
@@ -375,21 +373,18 @@ public class TexasField {
                     }
                 }
             }
+            sortCard(judgedhand);
             //ストレートかどうか
             if (dupnum < 4&&dupsuit<10) {
                 cards.removeAll(cards);
                 cards.add(judgedhand.get(0));
                 for (i = 1; i < 7; i++) if (judgedhand.get(i).number != judgedhand.get(i - 1).number) cards.add(judgedhand.get(i));
                 for (i = cards.size() - 5; i > -1; i--) {
-                    numsum = 0;
-                    for (j = 4; j > -1; j--) numsum = numsum + cards.get(i + j).number;
-                    if (numsum * (cards.get(i + 4).number - cards.get(i).number) == 20 * cards.get(i + 2).number) {
+                    if (cards.get(i + 4).number - cards.get(i).number==4) {
                         r = 140000000000.0 + 100000000 * cards.get(i + 4).number;
                         straight = true;
                         break;
                     }
-                    if(straight)break;
-                    //常にfalseだって言われる　なんでぇなの
                 }
             }
 
