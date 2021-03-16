@@ -11,7 +11,7 @@ public class Commands implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("血の通った人間で実行してください");
+            sender.sendMessage("プレイヤー以外は実行できません");
             return true;
         }
         if (args.length != 0) {
@@ -23,7 +23,7 @@ public class Commands implements CommandExecutor {
                         return true;
                     }
                     else if(args.length<3||!args[1].matches("-?\\d+")||!args[2].matches("-?\\d+")||Integer.parseInt(args[1])<10000||Math.abs(Integer.parseInt(args[2])-3)>1){
-                        p.sendMessage("/poker start <チップ一枚あたりの金額:10000円以上> <最大募集人数:1〜4人>");
+                        p.sendMessage("/poker start <チップ一枚あたりの金額:10000円以上> <最大募集人数:2〜4人>");
                         return true;
                     }
                     else if(Main.vault.getBalance(p.getUniqueId())<Double.parseDouble(args[1])*20){
@@ -70,6 +70,7 @@ public class Commands implements CommandExecutor {
                     p.sendMessage("/poker start <チップ一枚あたりの金額:10000円以上> <最大募集人数:1〜4人> :ゲームを開始します");
                     p.sendMessage("/poker join <募集している人のID> :ゲームに参加します");
                     p.sendMessage("/poker open :参加中のゲーム画面を開きます");
+                    return true;
                 case "open":
                     if(GlobalClass.currentplayer.containsKey(p)){
                         TexasField openfield=GlobalClass.texasholdemtable.get(GlobalClass.currentplayer.get(p));
