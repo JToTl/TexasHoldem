@@ -8,7 +8,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
@@ -114,10 +113,6 @@ public class TexasField {
     class TexasHoldem extends Thread{
         int i,j,k,seatsize,db,count;
         double p;
-
-        private int dealButtom(){
-            return (db-1)%seatsize;
-        }
 
         private void playSoundAllPlayer(Sound sound){
             for(i=0;i<seatmap.size();i++){
