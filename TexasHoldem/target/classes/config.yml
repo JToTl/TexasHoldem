@@ -1,0 +1,130 @@
+
+"0":
+  "14": "GRANITE"
+  "2": "POLISHED_GRANITE"
+  "3": "DIORITE"
+  "4": "POLISHED_DIORITE"
+  "5": "ANDESITE"
+  "6": "POLISHED_ANDESITE"
+  "7": "GRASS_BLOCK"
+  "8": "DIRT"
+  "9": "COARSE_DIRT"
+  "10": "PODZOL"
+  "11": "COBBLESTONE"
+  "12": "OAK_PLANKS"
+  "13": "SPRUCE_PLANKS"
+
+"1":
+  "14": "BIRCH_PLANKS"
+  "2": "JUNGLE_PLANKS"
+  "3": "ACACIA_PLANKS"
+  "4": "DARK_OAK_PLANKS"
+  "5": "OAK_SAPLING"
+  "6": "SPRUCE_SAPLING"
+  "7": "BIRCH_SAPLING"
+  "8": "JUNGLE_SAPLING"
+  "9": "DARK_OAK_SAPLING"
+  "10": "BEDROCK"
+  "11": "SAND"
+  "12": "RED_SAND"
+  "13": "GRAVEL"
+
+"2":
+  "14": "GOLD_ORE"
+  "2": "IRON_ORE"
+  "3": "COAL_ORE"
+  "4": "OAK_LOG"
+  "5": "SPRUCE_LOG"
+  "6": "BIRCH_LOG"
+  "7": "JUNGLE_LOG"
+  "8": "ACACIA_LOG"
+  "9": "DARK_OAK_LOG"
+  "10": "STRIPPED_OAK_LOG"
+  "11": "STRIPPED_SPRUCE_LOG"
+  "12": "STRIPPED_BIRCH_LOG"
+  "13": "STRIPPED_JUNGLE_LOG"
+
+"3":
+  "14": "STRIPPED_ACACIA_LOG"
+  "2": "STRIPPED_DARK_OAK_LOG"
+  "3": "STRIPPED_OAK_WOOD"
+  "4": "STRIPPED_SPRUCE_WOOD"
+  "5": "STRIPPED_BIRCH_WOOD"
+  "6": "STRIPPED_JUNGLE_WOOD"
+  "7": "STRIPPED_ACACIA_WOOD"
+  "8": "STRIPPED_DARK_OAK_WOOD"
+  "9": "OAK_WOOD"
+  "10": "SPRUCE_WOOD"
+  "11": "BIRCH_WOOD"
+  "12": "JUNGLE_WOOD"
+  "13": "ACACIA_WOOD"
+
+texasholdeminv:
+  "45":
+    material: "WHITE_STAINED_GLASS_PANE"
+    name: ""
+    lore: ""
+  "46":
+    material: "BLUE_STAINED_GLASS_PANE"
+    name: "§w§lフォールド"
+    lore: ""
+  "47":
+    material: "PINK_STAINED_GLASS_PANE"
+    name: "§w§lレイズ"
+    lore: ""
+  "48":
+    material: "RED_STAINED_GLASS_PANE"
+    name: "§w§lチェック"
+    lore: ""
+  "49":
+    material: "YELLOW_STAINED_GLASS_PANE"
+    name: "§w§lベット"
+    lore: ""
+  "50":
+    material: "GREEN_STAINED_GLASS_PANE"
+    name: "§w§lコール"
+    lore: ""
+  "51":
+    material: "BROWN_STAINED_GLASS_PANE"
+    name: "§w§lオールイン"
+    lore: ""
+  "52":
+    material: "WHITE_STAINED_GLASS_PANE"
+    name: ""
+    lore: ""
+
+raise:
+  "45":
+    material: "BARRIER"
+    name: "§4§l戻る"
+    lore:
+  "46":
+    material: "RED_WOOL"
+    name: "§c§l賭けチップを一枚減らす"
+    lore:
+  "47":
+    material: "WHITE_STAINED_GLASS_PANE"
+    name:
+    lore:
+  "48":
+    material: "WHITE_STAINED_GLASS_PANE"
+    name:
+    lore:
+  "49":
+    material: "GREEN_WOOL"
+    name: "§a§lこの額でレイズ"
+    lore:
+  "50":
+    material: "WHITE_STAINED_GLASS_PANE"
+    name:
+    lore:
+  "51":
+    material: "WHITE_STAINED_GLASS_PANE"
+    name:
+    lore:
+  "52":
+    material: "BLUE_WOOL"
+    name: "§9§l賭けチップを一枚増やす"
+    lore:
+
+
