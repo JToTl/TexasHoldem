@@ -26,7 +26,7 @@ public class Commands implements CommandExecutor {
                         p.sendMessage("あなたは既にゲームに参加しています！/poker open でゲーム画面を開きましょう！");
                         return true;
                     }
-                    else if(args.length<3||!args[1].matches("-?\\d+")||!args[2].matches("-?\\d+")||Math.abs(Double.parseDouble(args[1])-(Double.parseDouble(GlobalClass.config.getString("maxChipRate"))+10000)/2)>(Double.parseDouble(GlobalClass.config.getString("maxChipRate"))+10000)/2||Math.abs(Integer.parseInt(args[2])-3)>1){
+                    else if(args.length<3||!args[1].matches("-?\\d+")||!args[2].matches("-?\\d+")||Math.abs(Double.parseDouble(args[1])-(Double.parseDouble(GlobalClass.config.getString("maxChipRate"))+10000)/2)>(Double.parseDouble(GlobalClass.config.getString("maxChipRate"))-10000)/2||Math.abs(Integer.parseInt(args[2])-3)>1){
                         p.sendMessage("/poker start <チップ一枚あたりの金額:10000円以上> <最大募集人数:2〜4人>");
                         return true;
                     }
