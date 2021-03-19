@@ -64,7 +64,7 @@ public class MySQLGameData {
 
     public void saveGameData(TexasField texasField) throws SQLException{
         String playersdata[]=new String[8];
-        PreparedStatement preparedStatement= connection.prepareStatement("INSERT INTO texasholdem_gamedata (startTime,endTime,P1,P2,P3,P4,tipRate,firstTips,P1Tips,P2Tips,P3Tips,P4Tips) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);");
+        PreparedStatement preparedStatement= connection.prepareStatement("INSERT INTO texasholdem_gamedata (startTime,endTime,P1,P2,P3,P4,chipRate,firstChips,P1Chips,P2Chips,P3Chips,P4Chips) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);");
         preparedStatement.setString(1,getDateForMySQL(texasField.startTime));
         preparedStatement.setString(2,getDateForMySQL(texasField.endTime));
         for(int pcount=0;pcount<texasField.seatmap.size();pcount++){
