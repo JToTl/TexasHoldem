@@ -329,28 +329,28 @@ public class TexasField {
             return 4;
         }
 
-        private List<Card> sortCardSuit(List<Card> cards){
-            for (i = 0; i < cards.size(); i++) {
-                for (j = i + 1; j < cards.size(); j++) {
-                    if(cards.get(j).suit<cards.get(i).suit){
-                        Card icard = cards.get(j);
-                        cards.set(j, cards.get(i));
-                        cards.set(i, icard);
+        private List<Card> sortCardSuit(List<Card> sortcards){
+            for (i = 0; i < sortcards.size(); i++) {
+                for (j = i + 1; j < sortcards.size(); j++) {
+                    if(sortcards.get(j).suit<sortcards.get(i).suit){
+                        Card icard = sortcards.get(j);
+                        sortcards.set(j, sortcards.get(i));
+                        sortcards.set(i, icard);
                     }
-                    else if(cards.get(j).suit==cards.get(i).suit&&cards.get(j).number<cards.get(i).number){
-                        Card icard = cards.get(j);
-                        cards.set(j, cards.get(i));
-                        cards.set(i, icard);
+                    else if(sortcards.get(j).suit==sortcards.get(i).suit&&sortcards.get(j).number<sortcards.get(i).number){
+                        Card icard = sortcards.get(j);
+                        sortcards.set(j, sortcards.get(i));
+                        sortcards.set(i, icard);
                     }
                 }
             }
-            return cards;
+            return sortcards;
         }
 
         //手の判定　多分一番なげえ
         private double judgeHand(int t) {
 
-            List<Card> judgedhand=new ArrayList<>(community),cards = new ArrayList<>();
+            final List<Card> judgedhand=new ArrayList<>(community),cards = new ArrayList<>();
             judgedhand.addAll(seatmap.get(t).myhands);
             int dupnum = 0, dupsuit = 0;
             double r = 0;
