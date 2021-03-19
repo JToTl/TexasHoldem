@@ -34,7 +34,7 @@ public class MySQLGameData {
             Bukkit.getServer().getLogger().info("データベースを開くことができません");
         }
         else{
-            execute("CREATE TABLE IF NOT EXISTS texasholdem_gamedata (startTime DATETIME,endTime DATETIME,P1 TEXT,P2 TEXT,P3 TEXT,P4 TEXT,ChipRate DECIMAL,firstChips INT,P1Chips INT,P2Chips INT,P3Chips INT,P4Chips INT);");
+            execute("CREATE TABLE IF NOT EXISTS texasholdem_gamedata (startTime DATETIME,endTime DATETIME,P1 TEXT,P2 TEXT,P3 TEXT,P4 TEXT,chipRate DECIMAL,firstChips INT,P1Chips INT,P2Chips INT,P3Chips INT,P4Chips INT);");
             Bukkit.getServer().getLogger().info("データベースに接続しました");
         }
     }
