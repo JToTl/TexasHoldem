@@ -181,7 +181,7 @@ raise:
     lore:
   "49":
     material: "GREEN_WOOL"
-    name: "§a§lこの額でレイズ"
+    name: "§a§l以下の枚数でチップを上乗せする"
     lore:
   "50":
     material: "WHITE_STAINED_GLASS_PANE"
