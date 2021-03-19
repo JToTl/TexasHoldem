@@ -2,21 +2,32 @@ package ltotj.texasholdem;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Main extends JavaPlugin{
+import java.sql.SQLException;
 
-    static VaultManager vault;
+public class Main extends JavaPlugin{
 
     @Override
     public void onEnable(){
-        vault=new VaultManager(this);
-        new EventList(this);
-        getCommand("poker").setExecutor(new Commands());
+        GlobalClass.playable=true;
         GlobalClass.config=new Config(this);
         GlobalClass.config.load();
+        GlobalClass.vault=new VaultManager(this);
+        new EventList(this);
+        getCommand("poker").setExecutor(new Commands());
+        try {
+            GlobalClass.mySQLGameData=new MySQLGameData();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     @Override
     public void onDisable(){
+        try {
+            GlobalClass.mySQLGameData.connectionClose();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
 }

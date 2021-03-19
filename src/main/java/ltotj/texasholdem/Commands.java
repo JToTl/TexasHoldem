@@ -16,17 +16,21 @@ public class Commands implements CommandExecutor {
         }
         if (args.length != 0) {
             Player p=(Player) sender;
+            if(!GlobalClass.playable) {
+                p.sendMessage("プラグイン[TexasHoldem]はただいま停止中です");
+                return true;
+            }
             switch (args[0]) {
                 case"start":
                     if(GlobalClass.currentplayer.containsKey(p)){
                         p.sendMessage("あなたは既にゲームに参加しています！/poker open でゲーム画面を開きましょう！");
                         return true;
                     }
-                    else if(args.length<3||!args[1].matches("-?\\d+")||!args[2].matches("-?\\d+")||Integer.parseInt(args[1])<10000||Math.abs(Integer.parseInt(args[2])-3)>1){
+                    else if(args.length<3||!args[1].matches("-?\\d+")||!args[2].matches("-?\\d+")||Math.abs(Double.parseDouble(args[1])-(Double.parseDouble(GlobalClass.config.getString("maxChipRate"))+10000)/2)>(Double.parseDouble(GlobalClass.config.getString("maxChipRate"))+10000)/2||Math.abs(Integer.parseInt(args[2])-3)>1){
                         p.sendMessage("/poker start <チップ一枚あたりの金額:10000円以上> <最大募集人数:2〜4人>");
                         return true;
                     }
-                    else if(Main.vault.getBalance(p.getUniqueId())<Double.parseDouble(args[1])*20){
+                    else if(GlobalClass.vault.getBalance(p.getUniqueId())<Double.parseDouble(args[1])*Double.parseDouble(GlobalClass.config.getString("firstNumberOfChips"))){
                         p.sendMessage("所持金が足りません");
                         return true;
                     }
@@ -35,7 +39,7 @@ public class Commands implements CommandExecutor {
                     GlobalClass.texasholdemtable.get(p).texasHoldem.putPlayerHead(0);
                     GlobalClass.texasholdemtable.get(p).texasHoldem.othersTurnInv(0);
                     GlobalClass.texasholdemtable.get(p).seatmap.get(0).texasGui.openInventory(p);
-                    Bukkit.getServer().broadcastMessage(p.getName()+"さんが§l§cチップ一枚"+args[1]+"円§r、§l§e最大募集人数"+args[2]+"人§rでテキサスホールデムを募集中！/poker join "+p.getName()+"で参加しましょう！");
+                    Bukkit.getServer().broadcastMessage("§l"+p.getName()+"§aが§cチップ一枚"+args[1]+"円§r、§l§e最大募集人数"+args[2]+"人§aで§7§lテキサスホールデム§aを募集中！§r/poker join "+p.getName()+" §l§aで参加しましょう！");
                     GlobalClass.texasholdemtable.get(p).texasHoldem.start();
                     return true;
                 case "join":
@@ -53,11 +57,11 @@ public class Commands implements CommandExecutor {
                     }
                     Player masplayer=sender.getServer().getPlayer(args[1]);
                     TexasField field=GlobalClass.texasholdemtable.get(masplayer);
-                    if(field.isrun){
+                    if(field.isrunning){
                         p.sendMessage("既にゲームが始まっています /poker start <チップ一枚あたりの金額> <最大募集人数:4人まで> で新しいゲームを作成し参加者を募りましょう！");
                         return true;
                     }
-                    else if(Main.vault.getBalance(p.getUniqueId())<field.tip*20){
+                    else if(GlobalClass.vault.getBalance(p.getUniqueId())<field.tip*field.firstChips){
                         p.sendMessage("所持金が足りません");
                         return true;
                     }

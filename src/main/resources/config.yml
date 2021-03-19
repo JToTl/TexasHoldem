@@ -1,63 +1,132 @@
+mysql:
+  host: "localhost"
+  port: "3306"
+  user: "minecraft"
+  pass: "JToTl"
+  database: "texasholdem_database"
+
+maxChipRate: "10000000"
+firstNumberOfChips: "30"
+
+#最初の0~3はスペード、ダイヤ、ハート、クラブを表す
+#その後は数字　14は1のこと
+
+cardMaterial: "GOLD_NUGGET"
+
+faceDownCard:
+  customModelData: "777"
 
 "0":
-  "14": "GRANITE"
-  "2": "POLISHED_GRANITE"
-  "3": "DIORITE"
-  "4": "POLISHED_DIORITE"
-  "5": "ANDESITE"
-  "6": "POLISHED_ANDESITE"
-  "7": "GRASS_BLOCK"
-  "8": "DIRT"
-  "9": "COARSE_DIRT"
-  "10": "PODZOL"
-  "11": "COBBLESTONE"
-  "12": "OAK_PLANKS"
-  "13": "SPRUCE_PLANKS"
+  "14":
+    customModelData: "1"
+  "2":
+    customModelData: "2"
+  "3":
+    customModelData: "3"
+  "4":
+    customModelData: "4"
+  "5":
+    customModelData: "5"
+  "6":
+    customModelData: "6"
+  "7":
+    customModelData: "7"
+  "8":
+    customModelData: "8"
+  "9":
+    customModelData: "9"
+  "10":
+    customModelData: "10"
+  "11":
+    customModelData: "11"
+  "12":
+    customModelData: "12"
+  "13":
+    customModelData: "13"
 
 "1":
-  "14": "BIRCH_PLANKS"
-  "2": "JUNGLE_PLANKS"
-  "3": "ACACIA_PLANKS"
-  "4": "DARK_OAK_PLANKS"
-  "5": "OAK_SAPLING"
-  "6": "SPRUCE_SAPLING"
-  "7": "BIRCH_SAPLING"
-  "8": "JUNGLE_SAPLING"
-  "9": "DARK_OAK_SAPLING"
-  "10": "BEDROCK"
-  "11": "SAND"
-  "12": "RED_SAND"
-  "13": "GRAVEL"
+  "14":
+    customModelData: "101"
+  "2":
+    customModelData: "102"
+  "3":
+    customModelData: "103"
+  "4":
+    customModelData: "104"
+  "5":
+    customModelData: "105"
+  "6":
+    customModelData: "106"
+  "7":
+    customModelData: "107"
+  "8":
+    customModelData: "108"
+  "9":
+    customModelData: "109"
+  "10":
+    customModelData: "110"
+  "11":
+    customModelData: "111"
+  "12":
+    customModelData: "112"
+  "13":
+    customModelData: "113"
 
 "2":
-  "14": "GOLD_ORE"
-  "2": "IRON_ORE"
-  "3": "COAL_ORE"
-  "4": "OAK_LOG"
-  "5": "SPRUCE_LOG"
-  "6": "BIRCH_LOG"
-  "7": "JUNGLE_LOG"
-  "8": "ACACIA_LOG"
-  "9": "DARK_OAK_LOG"
-  "10": "STRIPPED_OAK_LOG"
-  "11": "STRIPPED_SPRUCE_LOG"
-  "12": "STRIPPED_BIRCH_LOG"
-  "13": "STRIPPED_JUNGLE_LOG"
+  "14":
+    customModelData: "201"
+  "2":
+    customModelData: "202"
+  "3":
+    customModelData: "203"
+  "4":
+    customModelData: "204"
+  "5":
+    customModelData: "205"
+  "6":
+    customModelData: "206"
+  "7":
+    customModelData: "207"
+  "8":
+    customModelData: "208"
+  "9":
+    customModelData: "209"
+  "10":
+    customModelData: "210"
+  "11":
+    customModelData: "211"
+  "12":
+    customModelData: "212"
+  "13":
+    customModelData: "213"
 
 "3":
-  "14": "STRIPPED_ACACIA_LOG"
-  "2": "STRIPPED_DARK_OAK_LOG"
-  "3": "STRIPPED_OAK_WOOD"
-  "4": "STRIPPED_SPRUCE_WOOD"
-  "5": "STRIPPED_BIRCH_WOOD"
-  "6": "STRIPPED_JUNGLE_WOOD"
-  "7": "STRIPPED_ACACIA_WOOD"
-  "8": "STRIPPED_DARK_OAK_WOOD"
-  "9": "OAK_WOOD"
-  "10": "SPRUCE_WOOD"
-  "11": "BIRCH_WOOD"
-  "12": "JUNGLE_WOOD"
-  "13": "ACACIA_WOOD"
+  "14":
+    customModelData: "301"
+  "2":
+    customModelData: "302"
+  "3":
+    customModelData: "303"
+  "4":
+    customModelData: "304"
+  "5":
+    customModelData: "305"
+  "6":
+    customModelData: "306"
+  "7":
+    customModelData: "307"
+  "8":
+    customModelData: "308"
+  "9":
+    customModelData: "309"
+  "10":
+    customModelData: "310"
+  "11":
+    customModelData: "311"
+  "12":
+    customModelData: "312"
+  "13":
+    customModelData: "313"
 
 texasholdeminv:
   "45":

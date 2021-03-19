@@ -9,17 +9,19 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class TexasField {
+    Date startTime,endTime;
     List<Card> deck=new ArrayList<>();
     HashMap<Integer,Seat> seatmap=new HashMap<>();
     HashMap<Player,Integer> playermap=new HashMap<>();
     List<Card> community=new ArrayList<>();
-    static Player masterplayer;
+    Player masterplayer;
     double tip;
-    int pot,bet,foldcount,maxseat;
-    boolean isrun=false;
+    int firstChips,pot,bet,foldcount,maxseat;
+    boolean isrunning=false;
     TexasHoldem texasHoldem;
 
     static class Card {
@@ -27,9 +29,10 @@ public class TexasField {
         int suit;
 
         public ItemStack getCard() {
-            Material material = Material.valueOf(GlobalClass.config.getString(suit + "." + number ));
+            Material material = Material.valueOf(GlobalClass.config.getString("cardMaterial" ));
             final ItemStack item = new ItemStack(material, 1);
             final ItemMeta meta = item.getItemMeta();
+            meta.setCustomModelData(Integer.valueOf(GlobalClass.config.getString(suit+"."+number+".customModelData")));
             meta.setDisplayName(getSuit(suit) + "の" + ((number-1)%13+1));
             item.setItemMeta(meta);
             return item;
@@ -54,7 +57,7 @@ public class TexasField {
         TexasGui texasGui= new TexasGui();
         Player player;
         List<Card> myhands=new ArrayList<>();
-        int addtip=0,instancebet,playertips=20;
+        int addChip=0,instancebet,playerChips=firstChips;
         double hand=0;
         String action="";
         boolean folded=false;
@@ -70,7 +73,7 @@ public class TexasField {
             head.setItemMeta(skull);
 
             //シート作成時に徴収しまーす
-            Main.vault.withdraw(p,tip*20);
+            GlobalClass.vault.withdraw(p,tip*firstChips);
         }
     }
 
@@ -144,7 +147,7 @@ public class TexasField {
         }
 
         public void raiseButtomReset(int t){
-            seatmap.get(t).texasGui.putCustomItem(49,Material.valueOf(GlobalClass.config.getString("raise.49.material")),GlobalClass.config.getString("raise.49.name"),"§c"+seatmap.get(t).addtip+"枚追加");
+            seatmap.get(t).texasGui.putCustomItem(49,Material.valueOf(GlobalClass.config.getString("raise.49.material")),GlobalClass.config.getString("raise.49.name"),"§c"+seatmap.get(t).addChip+"枚追加");
         }
 
         public void raiseInv(int t){
@@ -170,6 +173,16 @@ public class TexasField {
         private int getDigit(double f,int t,int s){
             double l=Math.floor(f/Math.pow(10,11-s));
             return (int) (Math.round(l-100*Math.floor(l/100)));
+        }
+
+        private ItemStack getFaceDownCard() {
+            Material material = Material.valueOf(GlobalClass.config.getString("cardMaterial" ));
+            final ItemStack item = new ItemStack(material, 1);
+            final ItemMeta meta = item.getItemMeta();
+            meta.setCustomModelData(Integer.valueOf(GlobalClass.config.getString("faceDownCard.customModelData")));
+            meta.setDisplayName("???");
+            item.setItemMeta(meta);
+            return item;
         }
 
         //席順とforのiがズレるからその対処
@@ -224,7 +237,7 @@ public class TexasField {
         }
 
         public void putCoin(int t,int s){
-            putItemAllPlayer(cardPosition(t)+2,s%65,Material.GOLD_INGOT,"§c§l"+seatmap.get(t).player.getName()+"§r§wのチップ","§e"+seatmap.get(t).playertips+"§w枚");
+            putItemAllPlayer(cardPosition(t)+2,s%65,Material.GOLD_INGOT,"§c§l"+seatmap.get(t).player.getName()+"§r§wのチップ","§e"+seatmap.get(t).playerChips+"§w枚");
         }
 
         private void putPot(){
@@ -247,9 +260,9 @@ public class TexasField {
                         putItemAllPlayer(new ItemStack(Material.CLOCK, c / 20), 26);
                     }
                     if (c == 0) {
-                        seatmap.get(k).addtip=0;
+                        seatmap.get(k).addChip=0;
                         othersTurnInv(k);
-                        if (seatmap.get(k).playertips >= bet) Call(k);
+                        if (seatmap.get(k).playerChips >= bet) Call(k);
                         else {
                             othersTurnInv(k);
                             foldcount=foldcount+1;
@@ -307,7 +320,7 @@ public class TexasField {
         int a;
         private int isFlash(int t){
             a=getDigit(seatmap.get(t).hand,0,1);
-            if(a==5||a==8||a==9){
+            if(a==15||a==18||a==19){
                 wow.removeAll(wow);
                 wow.addAll(community);
                 sortCard(wow);
@@ -481,17 +494,29 @@ public class TexasField {
 
         @Override
         public void run() {
+
+            startTime=new Date();
+            endTime=new Date();
             for(int m=0;m<60;m++) {
-                if(m%10==0)Bukkit.getServer().broadcastMessage(masterplayer.getName()+"がテキサスホールデムを募集中・・・残り"+(60-m)+"秒 /poker join "+masterplayer.getName()+"で参加");
+                if(m%10==0)Bukkit.getServer().broadcastMessage("§l"+masterplayer.getName()+"§aが§7§lテキサスホールデム§aを募集中・・・残り"+(60-m)+"秒 §r/poker join "+masterplayer.getName()+" §l§aで参加");
                 if(seatmap.size()==maxseat)break;
                 sleep(1000);
             }
 
             //参加人数の取得、チップの設定
-            isrun=true;
+            isrunning=true;
             seatsize = seatmap.size();
             if(seatsize==1){
-                Bukkit.getServer().broadcastMessage(masterplayer.getName()+"さんのテキサスホールデムは人が集まらなかったので中止しました");
+                endTime=new Date();
+                try {
+                    GlobalClass.mySQLGameData.saveGameData(GlobalClass.texasholdemtable.get(masterplayer));
+                } catch (SQLException throwables) {
+                    GlobalClass.playable=false;
+                    System.out.println("エラー："+masterplayer.getName()+"が主催したゲームの記録が保存できませんでした");
+                    throwables.printStackTrace();
+                }
+                GlobalClass.vault.deposit(masterplayer,seatmap.get(0).playerChips*tip);
+                Bukkit.getServer().broadcastMessage("§l"+masterplayer.getName()+"§aの§7テキサスホールデム§aは人が集まらなかったので中止しました");
                 GlobalClass.currentplayer.remove(masterplayer);
                 GlobalClass.texasholdemtable.remove(masterplayer);
                 return;
@@ -516,7 +541,7 @@ public class TexasField {
                     seatmap.get(i).myhands.removeAll(seatmap.get(i).myhands);
                     dealCard(i);
                     dealCard(i);
-                    if(seatmap.get(i).playertips==0){
+                    if(seatmap.get(i).playerChips==0){
                         seatmap.get(i).folded = true;
                         foldcount=foldcount+1;
                     }
@@ -529,20 +554,26 @@ public class TexasField {
                 //カード配布
                 for (int m = 0; m < seatsize; m++) {
                     playSoundAllPlayer(Sound.ITEM_BOOK_PAGE_TURN);
-                    putItemExceptForOne(new ItemStack(Material.PINK_DYE), cardPosition(m), m);
+                    putItemExceptForOne(getFaceDownCard(), cardPosition(m), m);
                     seatmap.get(m).texasGui.inv.setItem(cardPosition(m),seatmap.get(m).myhands.get(0).getCard());
                     sleep(500);
 
                     playSoundAllPlayer(Sound.ITEM_BOOK_PAGE_TURN);
-                    putItemExceptForOne(new ItemStack(Material.PINK_DYE), cardPosition(m) + 1, m);
+                    putItemExceptForOne(getFaceDownCard(), cardPosition(m) + 1, m);
                     seatmap.get(m).texasGui.inv.setItem(cardPosition(m)+1, seatmap.get(m).myhands.get(1).getCard());
                     sleep(500);
                 }
 
+                for(int m=0;m<5;m++){
+                    playSoundAllPlayer(Sound.ITEM_BOOK_PAGE_TURN);
+                    putItemAllPlayer(getFaceDownCard(),20+m);
+                    sleep(350);
+                }
+
                 //プリフロップ SBとBBの強制ベット 額がなければ次へ
                 for(int m=0;m<2;m++){
-                    if(seatmap.get(convertInt(m)).playertips<m+1)continue;
-                    seatmap.get(convertInt(m)).addtip=1;
+                    if(seatmap.get(convertInt(m)).playerChips<m+1)continue;
+                    seatmap.get(convertInt(m)).addChip=1;
                     Call(convertInt(m));
                     putCoin(convertInt(m),1);
                 }
@@ -652,7 +683,7 @@ public class TexasField {
                 //勝者にチップを全部渡す
                 //勝者が複数いたら等分にして、あまりをBBかなんかそんな感じの位置の人に渡す・・・らしい！しらんけど
                 for(int m=0;m<seatsize;m++){
-                    if(seatmap.get(m).hand==seatmap.get(winnerseat).hand)seatmap.get(m).playertips=seatmap.get(m).playertips+pot/winners;
+                    if(seatmap.get(m).hand==seatmap.get(winnerseat).hand)seatmap.get(m).playerChips=seatmap.get(m).playerChips+pot/winners;
                 }
                 if(winners==1){
                     for(int m=0;m<8;m++){
@@ -675,7 +706,7 @@ public class TexasField {
                     }
                 }
                 else{
-                    seatmap.get(convertInt(2)).playertips=seatmap.get(convertInt(2)).playertips+pot%winners;
+                    seatmap.get(convertInt(2)).playerChips=seatmap.get(convertInt(2)).playerChips+pot%winners;
                     for(int m=0;m<5;m++){
                         putItemAllPlayer(20+m,1,Material.BARRIER,"DRAW","引き分け 同率１位のプレイヤーに賞金が分配されます");
                     }
@@ -696,16 +727,24 @@ public class TexasField {
 
             Bukkit.broadcastMessage(masterplayer.getName()+"が募集したテキサスホールデムが終了しました");
 
-            //結果表示ついでにチップを換金して配布、テーブル削除
+            //結果表示ついでにチップを換金して配布、テーブル削除 DBにゲームの結果を記録
             //closeinventoryがメインスレッドでしか動かんらしいから自分で閉じてもらおう
+            endTime=new Date();
+            try {
+                GlobalClass.mySQLGameData.saveGameData(GlobalClass.texasholdemtable.get(masterplayer));
+            } catch (SQLException throwables) {
+                GlobalClass.playable=false;
+                System.out.println("エラー："+masterplayer.getName()+"が主催したゲームの記録が保存できませんでした");
+                throwables.printStackTrace();
+            }
             for(int m=0;m<seatsize;m++){
                 for(int x=0;x<seatsize;x++){
-                    seatmap.get(m).player.sendMessage(seatmap.get(x).player.getName()+":のチップ：20枚→"+seatmap.get(x).playertips);
+                    seatmap.get(m).player.sendMessage(seatmap.get(x).player.getName()+":のチップ：20枚→"+seatmap.get(x).playerChips+"枚");
                 }
                 for(int x=0;x<54;x++){
-                    seatmap.get(m).texasGui.putCustomItem(x,1,Material.BARRIER,"終了です","Eボタンを押して画面を閉じてください");
+                    seatmap.get(m).texasGui.putCustomItem(x,1,Material.WHITE_STAINED_GLASS_PANE,"終了です","Eボタンを押して画面を閉じてください");
                 }
-                Main.vault.deposit(seatmap.get(m).player,seatmap.get(m).playertips*tip);
+                GlobalClass.vault.deposit(seatmap.get(m).player,seatmap.get(m).playerChips*tip);
                 GlobalClass.currentplayer.remove(seatmap.get(m).player);
             }
             GlobalClass.texasholdemtable.remove(masterplayer);
@@ -720,21 +759,21 @@ public class TexasField {
     //現在のbetの値との差額を払う
     //Callって書いてあるけどRaiseもCheckも全部これ
     public void Call(int i){
-        bet=bet+seatmap.get(i).addtip;
-        seatmap.get(i).playertips=seatmap.get(i).playertips-bet+seatmap.get(i).instancebet;
+        bet=bet+seatmap.get(i).addChip;
+        seatmap.get(i).playerChips=seatmap.get(i).playerChips-bet+seatmap.get(i).instancebet;
         texasHoldem.putTip(i,seatmap.get(i).instancebet,bet);
         seatmap.get(i).instancebet=bet;
-        seatmap.get(i).addtip=0;
+        seatmap.get(i).addChip=0;
     }
 
     public void AllIn(int i){
-        pot=pot+seatmap.get(i).playertips;
-        texasHoldem.putItemAllPlayer(texasHoldem.tipPosition(i),1,Material.NETHER_STAR,"§a§lオールイン","§c"+seatmap.get(i).playertips);
-        seatmap.get(i).playertips=0;
+        pot=pot+seatmap.get(i).playerChips;
+        texasHoldem.putItemAllPlayer(texasHoldem.tipPosition(i),1,Material.NETHER_STAR,"§a§lオールイン","§c"+seatmap.get(i).playerChips);
+        seatmap.get(i).playerChips=0;
     }
 
     public boolean canNextTurn(int i){
-        if(seatmap.get(i).instancebet==bet||seatmap.get(i).playertips==0)return true;
+        if(seatmap.get(i).instancebet==bet||seatmap.get(i).playerChips==0)return true;
         return false;
     }
 
@@ -760,6 +799,7 @@ public class TexasField {
     }
 
     public TexasField(Player p,double monnney,int maxxxseat) {
+        firstChips= Integer.parseInt(GlobalClass.config.getString("firstNumberOfChips"));
         tip=monnney;
         maxseat=maxxxseat;
         masterplayer=p;

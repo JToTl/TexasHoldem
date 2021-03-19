@@ -29,7 +29,7 @@ public class EventList implements Listener {
         final ItemStack clickedItem = e.getCurrentItem();
         if (clickedItem == null || clickedItem.getType().equals(Material.AIR)) return;
         TexasField field = GlobalClass.texasholdemtable.get(GlobalClass.currentplayer.get(p));
-        int seat = field.playermap.get(p),ptip=field.seatmap.get(seat).addtip;
+        int seat = field.playermap.get(p),ptip=field.seatmap.get(seat).addChip;
         switch (Objects.requireNonNull(Objects.requireNonNull(clickedItem.getItemMeta()).getDisplayName())) {
             case "§w§lフォールド":
                 clickSound(p);
@@ -42,14 +42,14 @@ public class EventList implements Listener {
                     return;
                 }
             case "§w§lコール":
-            case "§a§lこの額でレイズ":
-                if(field.bet-field.seatmap.get(seat).instancebet>field.seatmap.get(seat).playertips)return;
+            case "§a§l以下の枚数でチップを上乗せする":
+                if(field.bet-field.seatmap.get(seat).instancebet>field.seatmap.get(seat).playerChips)return;
                 clickSound(p);
                 field.seatmap.get(seat).action = "Call";
                 break;
             case "§w§lベット":
             case "§w§lレイズ":
-                if(field.bet-field.seatmap.get(seat).instancebet>field.seatmap.get(seat).playertips)return;
+                if(field.bet-field.seatmap.get(seat).instancebet>field.seatmap.get(seat).playerChips)return;
                 clickSound(p);
                 field.texasHoldem.raiseInv(seat);
                 break;
@@ -60,18 +60,22 @@ public class EventList implements Listener {
             case "§c§l賭けチップを一枚減らす":
                 clickSound(p);
                 if(ptip<1)break;
-                field.seatmap.get(seat).addtip=ptip-1;
+                field.seatmap.get(seat).addChip=ptip-1;
                 field.texasHoldem.raiseButtomReset(seat);
                 break;
             case "§9§l賭けチップを一枚増やす":
                 clickSound(p);
-                if(field.seatmap.get(seat).playertips<field.bet+ptip+1)break;
-                field.seatmap.get(seat).addtip=ptip+1;
+                if(field.seatmap.get(seat).playerChips<field.bet+ptip+1)break;
+                else if(ptip>9){
+                    p.sendMessage("一度に上乗せできる枚数は十枚までです");
+                    break;
+                }
+                field.seatmap.get(seat).addChip=ptip+1;
                 field.texasHoldem.raiseButtomReset(seat);
                 break;
             case "§w§lオールイン":
                 clickSound(p);
-                if(field.bet-field.seatmap.get(seat).instancebet<=field.seatmap.get(seat).playertips)return;
+                if(field.bet-field.seatmap.get(seat).instancebet<=field.seatmap.get(seat).playerChips)return;
                 field.seatmap.get(seat).action = "AllIn";
                 break;
 
