@@ -255,7 +255,7 @@ public class TexasField {
                 k = convertInt(b + t );
                 seatmap.get(k).texasGui.ownTurnInv(k);
                 putItemAllPlayer(tipPosition(k)-3,1,Material.DIAMOND_BLOCK,"§l§wターンプレイヤー","");
-                for (int c = 400; c > -1; c--) {
+                for (int c = 600; c > -1; c--) {
                     if (seatmap.get(k).folded) break;
                     sleep(50);
                     if (c % 20 == 0) {
@@ -500,7 +500,6 @@ public class TexasField {
                         break;
                 }
             }
-            System.out.println(r);
             return Math.round(r);
         }
 
