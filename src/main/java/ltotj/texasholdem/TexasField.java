@@ -498,7 +498,7 @@ public class TexasField {
             startTime=new Date();
             endTime=new Date();
             for(int m=0;m<60;m++) {
-                if(m%10==0)Bukkit.getServer().broadcastMessage("§l"+masterplayer.getName()+"§aが§7§lテキサスホールデム§aを募集中・・・残り"+(60-m)+"秒 §r/poker join "+masterplayer.getName()+" §l§aで参加");
+                if(m%10==0)Bukkit.getServer().broadcastMessage("§l"+masterplayer.getName()+"§aが§7§lテキサスホールデム§aを募集中・・・残り"+(60-m)+"秒 §r/poker join "+masterplayer.getName()+" §l§aで参加 §4注意 参加必要金額"+firstChips*tip);
                 if(seatmap.size()==maxseat)break;
                 sleep(1000);
             }

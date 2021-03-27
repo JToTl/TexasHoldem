@@ -39,7 +39,7 @@ public class Commands implements CommandExecutor {
                     GlobalClass.texasholdemtable.get(p).texasHoldem.putPlayerHead(0);
                     GlobalClass.texasholdemtable.get(p).texasHoldem.othersTurnInv(0);
                     GlobalClass.texasholdemtable.get(p).seatmap.get(0).texasGui.openInventory(p);
-                    Bukkit.getServer().broadcastMessage("§l"+p.getName()+"§aが§cチップ一枚"+args[1]+"円§r、§l§e最大募集人数"+args[2]+"人§aで§7§lテキサスホールデム§aを募集中！§r/poker join "+p.getName()+" §l§aで参加しましょう！");
+                    Bukkit.getServer().broadcastMessage("§l"+p.getName()+"§aが§cチップ一枚"+args[1]+"円§r、§l§e最大募集人数"+args[2]+"人§aで§7§lテキサスホールデム§aを募集中！§r/poker join "+p.getName()+" §l§aで参加しましょう！ §4注意 参加必要金額"+Double.parseDouble(args[1])*Integer.parseInt(GlobalClass.config.getString("firstNumberOfChips")));
                     GlobalClass.texasholdemtable.get(p).texasHoldem.start();
                     return true;
                 case "join":
@@ -71,8 +71,8 @@ public class Commands implements CommandExecutor {
                     field.seatmap.get(field.playermap.get(p)).texasGui.openInventory(p);
                     break;
                 case "help":
-                    p.sendMessage("/poker start <チップ一枚あたりの金額:10000円以上> <最大募集人数:1〜4人> :ゲームを開始します");
-                    p.sendMessage("/poker join <募集している人のID> :ゲームに参加します");
+                    p.sendMessage("/poker start <チップ一枚あたりの金額:10000円以上> <最大募集人数:1〜4人> :テキサスホールデムの参加者を募集します 参加人数分だけゲームが行われます §4注意 設定金額×"+Integer.parseInt(GlobalClass.config.getString("firstNumberOfChips"))+"が必要です");
+                    p.sendMessage("/poker join <募集している人のID> :テキサスホールデムに参加します");
                     p.sendMessage("/poker open :参加中のゲーム画面を開きます");
                     return true;
                 case "open":
@@ -80,7 +80,7 @@ public class Commands implements CommandExecutor {
                         TexasField openfield=GlobalClass.texasholdemtable.get(GlobalClass.currentplayer.get(p));
                         openfield.seatmap.get(openfield.playermap.get(p)).texasGui.openInventory(p);
                     }
-                    else p.sendMessage("あなたはゲームに参加していません。");
+                    else p.sendMessage("あなたはテキサスホールデムに参加していません。");
                     return true;
             }
         }
