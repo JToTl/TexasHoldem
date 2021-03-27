@@ -16,7 +16,7 @@ public class TexasField {
     Date startTime,endTime;
     List<Card> deck=new ArrayList<>();
     HashMap<Integer,Seat> seatmap=new HashMap<>();
-    HashMap<Player,Integer> playermap=new HashMap<>();
+    HashMap<UUID,Integer> playermap=new HashMap<>();
     List<Card> community=new ArrayList<>();
     Player masterplayer;
     double tip;
@@ -65,7 +65,7 @@ public class TexasField {
 
         public Seat(Player p) {
             player = p;
-            GlobalClass.currentplayer.put(p, masterplayer);
+            GlobalClass.currentplayer.put(p.getUniqueId(), masterplayer.getUniqueId());
             head = new ItemStack(Material.PLAYER_HEAD);
             SkullMeta skull = (SkullMeta) head.getItemMeta();
             assert skull != null;
@@ -241,7 +241,10 @@ public class TexasField {
         }
 
         private void putPot(){
-            for(int t=0;t<seatsize;t++)pot=pot+seatmap.get(t).instancebet;
+            for(int t=0;t<seatsize;t++){
+                pot=pot+seatmap.get(t).instancebet;
+                seatmap.get(t).instancebet=0;
+            }
             putItemAllPlayer(25,1,Material.GOLD_BLOCK,"§6現在の賭けチップ合計","§e§l"+pot+"§w枚");
         }
 
@@ -252,7 +255,7 @@ public class TexasField {
                 k = convertInt(b + t );
                 seatmap.get(k).texasGui.ownTurnInv(k);
                 putItemAllPlayer(tipPosition(k)-3,1,Material.DIAMOND_BLOCK,"§l§wターンプレイヤー","");
-                for (int c = 600; c > -1; c--) {
+                for (int c = 400; c > -1; c--) {
                     if (seatmap.get(k).folded) break;
                     sleep(50);
                     if (c % 20 == 0) {
@@ -367,12 +370,16 @@ public class TexasField {
             //ストレートフラッシュかどうか　ついでにフラッシュならそれはそれでって感じ
             if(dupsuit>9){
                 cards.add(sortCardSuit(judgedhand).get(3));
-                for (i = 1; i < 7; i++) if (judgedhand.get(i).suit == judgedhand.get(3).suit&&i!=3) cards.add(judgedhand.get(i));
+                for (i = 0; i < 7; i++) if (judgedhand.get(i).suit == judgedhand.get(3).suit&&i!=3) cards.add(judgedhand.get(i));
                 sortCard(cards);
+                if(cards.get(0).number*cards.get(3).number==10&&cards.get(cards.size()-1).number==14){
+                    r=180504030214.0;
+                    straight=true;
+                }
                 for (i = cards.size() - 5; i > -1; i--) {
-                    if (cards.get(i + 4).number - cards.get(i).number==4) {
-                        if(cards.get(i+4).number==14)r=190000000000.0;
-                        else r=180000000000.0+100000000*cards.get(i+4).number;
+                    if (cards.get(i + 4).number - cards.get(i).number==4||(cards.get(i + 4).number - cards.get(i).number==12&&cards.get(i+3).number==5)) {
+                        if(cards.get(i+4).number==14)r=191413121110.0;
+                        else r=180000000000.0+100000000*cards.get(i+4).number+1000000 * cards.get(i + 3).number+10000 * cards.get(i + 2).number+100 * cards.get(i + 1).number+cards.get(i).number;
                         straight=true;
                         break;
                     }
@@ -392,9 +399,13 @@ public class TexasField {
                 cards.removeAll(cards);
                 cards.add(judgedhand.get(0));
                 for (i = 1; i < 7; i++) if (judgedhand.get(i).number != judgedhand.get(i - 1).number) cards.add(judgedhand.get(i));
+                if(cards.get(0).number*cards.get(3).number==10&&cards.get(cards.size()-1).number==14){
+                    r=140504030214.0;
+                    straight=true;
+                }
                 for (i = cards.size() - 5; i > -1; i--) {
                     if (cards.get(i + 4).number - cards.get(i).number==4) {
-                        r = 140000000000.0 + 100000000 * cards.get(i + 4).number;
+                        r = 140000000000.0 + 100000000 * cards.get(i + 4).number+1000000 * cards.get(i + 3).number+10000 * cards.get(i + 2).number+100 * cards.get(i + 1).number+cards.get(i).number;
                         straight = true;
                         break;
                     }
@@ -489,6 +500,7 @@ public class TexasField {
                         break;
                 }
             }
+            System.out.println(r);
             return Math.round(r);
         }
 
@@ -509,7 +521,7 @@ public class TexasField {
             if(seatsize==1){
                 endTime=new Date();
                 try {
-                    GlobalClass.mySQLGameData.saveGameData(GlobalClass.texasholdemtable.get(masterplayer));
+                    GlobalClass.mySQLGameData.saveGameData(GlobalClass.texasholdemtable.get(masterplayer.getUniqueId()));
                 } catch (SQLException throwables) {
                     GlobalClass.playable=false;
                     System.out.println("エラー："+masterplayer.getName()+"が主催したゲームの記録が保存できませんでした");
@@ -517,8 +529,8 @@ public class TexasField {
                 }
                 GlobalClass.vault.deposit(masterplayer,seatmap.get(0).playerChips*tip);
                 Bukkit.getServer().broadcastMessage("§l"+masterplayer.getName()+"§aの§7テキサスホールデム§aは人が集まらなかったので中止しました");
-                GlobalClass.currentplayer.remove(masterplayer);
-                GlobalClass.texasholdemtable.remove(masterplayer);
+                GlobalClass.currentplayer.remove(masterplayer.getUniqueId());
+                GlobalClass.texasholdemtable.remove(masterplayer.getUniqueId());
                 return;
             }
             db = 0;
@@ -530,7 +542,6 @@ public class TexasField {
                 Reset();
                 bet = 0;
                 pot = 0;
-                putPot();
                 community.removeAll(community);
                 for (i = 0; i < seatsize; i++) {
                     putItemAllPlayer(tipPosition(i),0,Material.STONE,"","");
@@ -546,6 +557,8 @@ public class TexasField {
                         foldcount=foldcount+1;
                     }
                 }
+                putPot();
+
                 for (i = 0; i < 5; i++) {
                     int random=new Random().nextInt(deck.size());
                     community.add(deck.get(random));
@@ -639,40 +652,78 @@ public class TexasField {
                 //役の表示
                 for(int m=0;m<seatsize;m++) {
                     if (seatmap.get(m).folded)continue;
-                    count = 0;
-                    p = seatmap.get(m).hand;
-                    int flsuit = isFlash(m);
-                    playSoundAllPlayer(Sound.BLOCK_BEACON_ACTIVATE);
-                    for (int x = 0; x < 5; x++) {
-                        for (int y = 0; y < 5; y++) {
-                            if (community.get(x).number == getDigit(p, 2 * y + 2, 2 * y + 3) && (flsuit == 4 || flsuit == community.get(x).suit)) {
-                                ItemStack item = community.get(x).getCard();
+                        count = 0;
+                        p = seatmap.get(m).hand;
+                        int flsuit = isFlash(m);
+                        playSoundAllPlayer(Sound.BLOCK_BEACON_ACTIVATE);
+                    if(getDigit(p,0,1)==14){
+                        for(int x=0;x<5;x++){
+                            putItemAllPlayer(new ItemStack(Material.STONE, 0), 20 + x);
+                        }
+                        putItemAllPlayer(new ItemStack(Material.STONE, 0), cardPosition(m));
+                        putItemAllPlayer(new ItemStack(Material.STONE, 0), cardPosition(m) + 1);
+                        for(int x=0;x<5;x++){
+                            boolean matched=false;
+                            for(int y=0;y<5;y++) {
+                                if (community.get(y).number == getDigit(p, 2 * x + 2, 2 * x + 3)) {
+                                    ItemStack item = community.get(y).getCard();
+                                    ItemMeta meta = item.getItemMeta();
+                                    meta.addEnchant(Enchantment.LURE, 1, true);
+                                    item.setItemMeta(meta);
+                                    putItemAllPlayer(item, 20 + y);
+                                    matched=true;
+                                    break;
+                                }
+                            }
+                            if(matched)continue;
+                            else if(seatmap.get(m).myhands.get(0).number==getDigit(p,2*x+2,2*x+3)) {
+                                ItemStack item = seatmap.get(m).myhands.get(0).getCard();
                                 ItemMeta meta = item.getItemMeta();
                                 meta.addEnchant(Enchantment.LURE, 1, true);
                                 item.setItemMeta(meta);
-                                putItemAllPlayer(item, 20 + x);
-                                count = count + 1;
-                                break;
+                                putItemAllPlayer(item, cardPosition(m));
                             }
-                            if (y == 4) putItemAllPlayer(new ItemStack(Material.STONE, 0), 20 + x);
+                            else {
+                                ItemStack item = seatmap.get(m).myhands.get(1).getCard();
+                                ItemMeta meta = item.getItemMeta();
+                                meta.addEnchant(Enchantment.LURE, 1, true);
+                                item.setItemMeta(meta);
+                                putItemAllPlayer(item, cardPosition(m) + 1);
+                            }
                         }
                     }
-                    int z;
-                    for (int x = 0; x < 2; x++) {
-                        z = 5;
-                        for (z = 0; z < 5 && count != 5; z++) {
-                            if (seatmap.get(m).myhands.get(x).number == getDigit(p, 2 * z + 2, 2 * z + 3) && (flsuit == 4 || flsuit == seatmap.get(m).myhands.get(x).suit)) {
-                                ItemStack item = seatmap.get(m).myhands.get(x).getCard();
-                                ItemMeta meta = item.getItemMeta();
-                                meta.addEnchant(Enchantment.LURE, 1, true);
-                                item.setItemMeta(meta);
-                                putItemAllPlayer(item, cardPosition(m) + x);
-                                count = count + 1;
-                                z = 1;
-                                break;
+                    else {
+                        for (int x = 0; x < 5; x++) {
+                            for (int y = 0; y < 5; y++) {
+                                if (community.get(x).number == getDigit(p, 2 * y + 2, 2 * y + 3) && (flsuit == 4 || flsuit == community.get(x).suit)) {
+                                    ItemStack item = community.get(x).getCard();
+                                    ItemMeta meta = item.getItemMeta();
+                                    meta.addEnchant(Enchantment.LURE, 1, true);
+                                    item.setItemMeta(meta);
+                                    putItemAllPlayer(item, 20 + x);
+                                    count = count + 1;
+                                    break;
+                                }
+                                if (y == 4) putItemAllPlayer(new ItemStack(Material.STONE, 0), 20 + x);
                             }
                         }
-                        if (z % 5 == 0) putItemAllPlayer(new ItemStack(Material.STONE, 0), cardPosition(m) + x);
+                        int z;
+                        for (int x = 0; x < 2; x++) {
+                            z = 5;
+                            for (z = 0; z < 5 && count != 5; z++) {
+                                if (seatmap.get(m).myhands.get(x).number == getDigit(p, 2 * z + 2, 2 * z + 3) && (flsuit == 4 || flsuit == seatmap.get(m).myhands.get(x).suit)) {
+                                    ItemStack item = seatmap.get(m).myhands.get(x).getCard();
+                                    ItemMeta meta = item.getItemMeta();
+                                    meta.addEnchant(Enchantment.LURE, 1, true);
+                                    item.setItemMeta(meta);
+                                    putItemAllPlayer(item, cardPosition(m) + x);
+                                    count = count + 1;
+                                    z = 1;
+                                    break;
+                                }
+                            }
+                            if (z % 5 == 0) putItemAllPlayer(new ItemStack(Material.STONE, 0), cardPosition(m) + x);
+                        }
                     }
                     sleep(5000);
                     putItemAllPlayer(seatmap.get(m).myhands.get(0).getCard(),cardPosition(m));
@@ -731,7 +782,7 @@ public class TexasField {
             //closeinventoryがメインスレッドでしか動かんらしいから自分で閉じてもらおう
             endTime=new Date();
             try {
-                GlobalClass.mySQLGameData.saveGameData(GlobalClass.texasholdemtable.get(masterplayer));
+                GlobalClass.mySQLGameData.saveGameData(GlobalClass.texasholdemtable.get(masterplayer.getUniqueId()));
             } catch (SQLException throwables) {
                 GlobalClass.playable=false;
                 System.out.println("エラー："+masterplayer.getName()+"が主催したゲームの記録が保存できませんでした");
@@ -739,15 +790,15 @@ public class TexasField {
             }
             for(int m=0;m<seatsize;m++){
                 for(int x=0;x<seatsize;x++){
-                    seatmap.get(m).player.sendMessage(seatmap.get(x).player.getName()+":のチップ：20枚→"+seatmap.get(x).playerChips+"枚");
+                    seatmap.get(m).player.sendMessage(seatmap.get(x).player.getName()+":のチップ："+firstChips+"枚→"+seatmap.get(x).playerChips+"枚");
                 }
                 for(int x=0;x<54;x++){
                     seatmap.get(m).texasGui.putCustomItem(x,1,Material.WHITE_STAINED_GLASS_PANE,"終了です","Eボタンを押して画面を閉じてください");
                 }
                 GlobalClass.vault.deposit(seatmap.get(m).player,seatmap.get(m).playerChips*tip);
-                GlobalClass.currentplayer.remove(seatmap.get(m).player);
+                GlobalClass.currentplayer.remove(seatmap.get(m).player.getUniqueId());
             }
-            GlobalClass.texasholdemtable.remove(masterplayer);
+            GlobalClass.texasholdemtable.remove(masterplayer.getUniqueId());
         }
     }
 
@@ -793,9 +844,9 @@ public class TexasField {
     }
 
     public void setPlayer(Player p){
-        playermap.put(p,seatmap.size());
+        playermap.put(p.getUniqueId(),seatmap.size());
         seatmap.put(seatmap.size(),new Seat(p));
-        texasHoldem.putPlayerHead(playermap.get(p));
+        texasHoldem.putPlayerHead(playermap.get(p.getUniqueId()));
     }
 
     public TexasField(Player p,double monnney,int maxxxseat) {
@@ -803,7 +854,7 @@ public class TexasField {
         tip=monnney;
         maxseat=maxxxseat;
         masterplayer=p;
-        playermap.put(p,0);
+        playermap.put(p.getUniqueId(),0);
         seatmap.put(0, new Seat(masterplayer));
         seatmap.get(0).player=p;
         texasHoldem= new TexasHoldem();

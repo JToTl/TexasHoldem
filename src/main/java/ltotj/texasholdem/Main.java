@@ -8,7 +8,7 @@ public class Main extends JavaPlugin{
 
     @Override
     public void onEnable(){
-        GlobalClass.playable=true;
+        GlobalClass.playable=false;
         GlobalClass.config=new Config(this);
         GlobalClass.config.load();
         GlobalClass.vault=new VaultManager(this);

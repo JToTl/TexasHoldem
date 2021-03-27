@@ -27,9 +27,9 @@ public class EventList implements Listener {
         e.setCancelled(true);
         Player p=(Player) e.getWhoClicked();
         final ItemStack clickedItem = e.getCurrentItem();
-        if (clickedItem == null || clickedItem.getType().equals(Material.AIR)) return;
-        TexasField field = GlobalClass.texasholdemtable.get(GlobalClass.currentplayer.get(p));
-        int seat = field.playermap.get(p),ptip=field.seatmap.get(seat).addChip;
+        if (clickedItem == null || clickedItem.getType().equals(Material.AIR)||clickedItem.getType().equals(Material.WHITE_STAINED_GLASS_PANE)) return;
+        TexasField field = GlobalClass.texasholdemtable.get(GlobalClass.currentplayer.get(p.getUniqueId()));
+        int seat = field.playermap.get(p.getUniqueId()),ptip=field.seatmap.get(seat).addChip;
         switch (Objects.requireNonNull(Objects.requireNonNull(clickedItem.getItemMeta()).getDisplayName())) {
             case "§w§lフォールド":
                 clickSound(p);
