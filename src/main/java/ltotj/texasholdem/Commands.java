@@ -12,6 +12,7 @@ public class Commands implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length == 0)return false;
         if(sender.hasPermission("operator")&&args[0].equals("switch")){
             GlobalClass.playable=!GlobalClass.playable;
             if(GlobalClass.playable) sender.sendMessage("playableをtrueに設定しました");
@@ -22,7 +23,6 @@ public class Commands implements CommandExecutor {
             sender.sendMessage("プレイヤー以外は実行できません");
             return true;
         }
-        if (args.length != 0) {
             Player p=(Player) sender;
             UUID puniq=p.getUniqueId();
             if(!GlobalClass.playable) {
@@ -96,7 +96,6 @@ public class Commands implements CommandExecutor {
                     else p.sendMessage("あなたはテキサスホールデムに参加していません。");
                     return true;
             }
-        }
         return false;
     }
 }
