@@ -44,7 +44,7 @@ public class Commands implements CommandExecutor {
                         return true;
                     }
                     GlobalClass.texasholdemtable.put(p.getUniqueId(),new TexasField(p,Double.parseDouble(args[1]),Integer.parseInt(args[2])));
-                    if(args.length>3&&args[3].matches("-?\\d+")&&Integer.parseInt(args[2])<=Integer.parseInt(args[3])) GlobalClass.texasholdemtable.get(puniq).maxseat=Integer.parseInt(args[3]);
+                    if(args.length>3&&args[3].matches("-?\\d+")&&Integer.parseInt(args[2])<=Integer.parseInt(args[3])&&Integer.parseInt(args[3])<=4) GlobalClass.texasholdemtable.get(puniq).maxseat=Integer.parseInt(args[3]);
                     GlobalClass.texasholdemtable.get(puniq).texasHoldem.putCoin(0,1);
                     GlobalClass.texasholdemtable.get(puniq).texasHoldem.putPlayerHead(0);
                     GlobalClass.texasholdemtable.get(puniq).texasHoldem.othersTurnInv(0);
