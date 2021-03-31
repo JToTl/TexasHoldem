@@ -526,9 +526,9 @@ public class TexasField {
                     System.out.println("エラー："+masterplayer.getName()+"が主催したゲームの記録が保存できませんでした");
                     throwables.printStackTrace();
                 }
-                GlobalClass.vault.deposit(masterplayer,seatmap.get(0).playerChips*tip);
                 Bukkit.getServer().broadcastMessage("§l"+masterplayer.getName()+"§aの§7テキサスホールデム§aは人が集まらなかったので中止しました");
                 for(int m=0;m<seatsize;m++){
+                    GlobalClass.vault.deposit(seatmap.get(m).player,seatmap.get(m).playerChips*tip);
                     GlobalClass.currentplayer.remove(seatmap.get(m).player.getUniqueId());
                 }
                 GlobalClass.texasholdemtable.remove(masterplayer.getUniqueId());
