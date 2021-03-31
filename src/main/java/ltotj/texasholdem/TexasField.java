@@ -20,7 +20,7 @@ public class TexasField {
     List<Card> community=new ArrayList<>();
     Player masterplayer;
     double tip;
-    int firstChips,pot,bet,foldcount,maxseat;
+    int firstChips,pot,bet,foldcount,maxseat,minseat;
     boolean isrunning=false;
     TexasHoldem texasHoldem;
 
@@ -32,7 +32,7 @@ public class TexasField {
             Material material = Material.valueOf(GlobalClass.config.getString("cardMaterial" ));
             final ItemStack item = new ItemStack(material, 1);
             final ItemMeta meta = item.getItemMeta();
-            meta.setCustomModelData(Integer.valueOf(GlobalClass.config.getString(suit+"."+number+".customModelData")));
+            meta.setCustomModelData(GlobalClass.config.getInt(suit+"."+number+".customModelData"));
             meta.setDisplayName(getSuit(suit) + "の" + ((number-1)%13+1));
             item.setItemMeta(meta);
             return item;
@@ -517,7 +517,7 @@ public class TexasField {
             //参加人数の取得、チップの設定
             isrunning=true;
             seatsize = seatmap.size();
-            if(seatsize==1){
+            if(seatsize<minseat){
                 endTime=new Date();
                 try {
                     GlobalClass.mySQLGameData.saveGameData(GlobalClass.texasholdemtable.get(masterplayer.getUniqueId()));
@@ -528,7 +528,9 @@ public class TexasField {
                 }
                 GlobalClass.vault.deposit(masterplayer,seatmap.get(0).playerChips*tip);
                 Bukkit.getServer().broadcastMessage("§l"+masterplayer.getName()+"§aの§7テキサスホールデム§aは人が集まらなかったので中止しました");
-                GlobalClass.currentplayer.remove(masterplayer.getUniqueId());
+                for(int m=0;m<seatsize;m++){
+                    GlobalClass.currentplayer.remove(seatmap.get(m).player.getUniqueId());
+                }
                 GlobalClass.texasholdemtable.remove(masterplayer.getUniqueId());
                 return;
             }
@@ -848,10 +850,11 @@ public class TexasField {
         texasHoldem.putPlayerHead(playermap.get(p.getUniqueId()));
     }
 
-    public TexasField(Player p,double monnney,int maxxxseat) {
-        firstChips= Integer.parseInt(GlobalClass.config.getString("firstNumberOfChips"));
+    public TexasField(Player p,double monnney,int minnnnnseat) {
+        firstChips= GlobalClass.config.getInt("firstNumberOfChips");
         tip=monnney;
-        maxseat=maxxxseat;
+        maxseat=4;
+        minseat=minnnnnseat;
         masterplayer=p;
         playermap.put(p.getUniqueId(),0);
         seatmap.put(0, new Seat(masterplayer));

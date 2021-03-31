@@ -27,5 +27,19 @@ public class Config {
             return "";
         }
     }
+    public int getInt(String string){
+        try{
+            return config.getInt(string);
+        }catch(Exception exception){
+            return 0;
+        }
+    }
+    public double getDouble(String string){
+        try{
+            return config.getDouble(string);
+        }catch(Exception exception){
+            return 0;
+        }
+    }
 
 }
