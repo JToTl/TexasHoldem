@@ -7,3 +7,9 @@ commands:
   poker:
     description:
     usage:  "/poker help でコマンドを確認"
+
+permissions:
+  operator:
+    default: op
+  player:
+    default: true
