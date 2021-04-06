@@ -14,11 +14,6 @@ public class Main extends JavaPlugin{
         GlobalClass.vault=new VaultManager(this);
         new EventList(this);
         getCommand("poker").setExecutor(new Commands());
-        try {
-            GlobalClass.mySQLGameData=new MySQLGameData();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
     }
 
     @Override

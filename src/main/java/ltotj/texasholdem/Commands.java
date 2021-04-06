@@ -6,6 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class Commands implements CommandExecutor {
@@ -15,8 +16,23 @@ public class Commands implements CommandExecutor {
         if (args.length == 0)return false;
         if(sender.hasPermission("operator")&&args[0].equals("switch")){
             GlobalClass.playable=!GlobalClass.playable;
-            if(GlobalClass.playable) sender.sendMessage("playableをtrueに設定しました");
-            else sender.sendMessage("playableをfalseに設定しました");
+            if(GlobalClass.playable) {
+                sender.sendMessage("playableをtrueに設定しました");
+                try {
+                    GlobalClass.mySQLGameData=new MySQLGameData();
+                } catch (SQLException throwables) {
+                    sender.sendMessage("§4データベースに接続できませんでした");
+                    throwables.printStackTrace();
+                }
+            }
+            else{
+                sender.sendMessage("playableをfalseに設定しました");
+                try {
+                    GlobalClass.mySQLGameData.connectionClose();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
             return true;
         }
         if (!(sender instanceof Player)) {
@@ -26,6 +42,13 @@ public class Commands implements CommandExecutor {
             Player p=(Player) sender;
             UUID puniq=p.getUniqueId();
             switch (args[0]) {
+                case"test":
+                    if(GlobalClass.mySQLGameData==null){
+                        p.sendMessage("つながってないよ");
+                    }
+                    else p.sendMessage("aaaa");
+                break;
+
                 case"start":
                     if(!GlobalClass.playable) {
                         p.sendMessage("プラグイン[TexasHoldem]はただいま停止中です");

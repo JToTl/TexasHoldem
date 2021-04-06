@@ -21,14 +21,17 @@ public class MySQLGameData {
     private final String pass;
     private final String port;
 
-    public MySQLGameData() throws SQLException{
+    MySQLGameData() throws SQLException{
         host=GlobalClass.config.getString("mysql.host");
         database=GlobalClass.config.getString("mysql.database");
         user=GlobalClass.config.getString("mysql.user");
         pass=GlobalClass.config.getString("mysql.pass");
         port=GlobalClass.config.getString("mysql.port");
 
-        if(!Connect())Bukkit.getServer().getLogger().info("データベースに接続できませんでした");
+        if(!Connect()){
+            GlobalClass.playable=false;
+            Bukkit.getServer().getLogger().info("データベースに接続できませんでした");
+        }
         else if(connection==null||connection.isClosed()){
             GlobalClass.playable=false;
             Bukkit.getServer().getLogger().info("データベースを開くことができません");
